@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shop.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
@@ -7,37 +10,46 @@ namespace Shop.Controllers
     {
         [HttpGet]
         [Route("")]
-        public string Get()
+        public async Task<ActionResult<List<Category>>> Get()
         {
-            return "Get";
+            return new List<Category>();
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public string GetById(int id)
+        public async Task<ActionResult<List<Category>>> GetById(int id)
         {
-            return "Get" + id.ToString();
+            return Ok(new Category());
         }
 
         [HttpPost]
         [Route("")]
-        public string Post()
+        public async Task<ActionResult<List<Category>>> Post([FromBody] Category model)
         {
-            return "Post";
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(model);
         }
 
         [HttpPut]
-        [Route("")]
-        public string Put()
+        [Route("{id:int}")]
+        public async Task<ActionResult<List<Category>>> Put(int id, [FromBody] Category model)
         {
-            return "Put";
+            if (id != model.Id)
+                return NotFound(new { message = "Categoria (ID) não encontrada" });
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            return Ok("Categoria " + model.Id + " atualizada com sucesso!");
         }
 
         [HttpDelete]
-        [Route("")]
-        public string Delete()
+        [Route("{id:int}")]
+        public async Task<ActionResult<List<Category>>> Delete()
         {
-            return "Delete";
+            return Ok();
         }
     }
 }
