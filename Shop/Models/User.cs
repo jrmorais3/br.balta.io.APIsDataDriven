@@ -4,6 +4,9 @@ namespace Shop.Models
 {
     public class User
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Este campo é obrigatório")]
         [MaxLength(20, ErrorMessage = "Este campo deve possuir até 20 caractere")]
         [MinLength(3, ErrorMessage = "Este campo deve possuir acima de 3 caractere")]
