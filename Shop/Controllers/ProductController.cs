@@ -8,26 +8,36 @@ using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
+    [Route("products")]
     public class ProductController : ControllerBase
     {
         [HttpGet]
-        [Route("products")]
+        [Route("")]
         public async Task<ActionResult<List<Product>>> Get([FromServices] DataContext context)
         {
-            var products = await context.Products.AsNoTracking().ToListAsync();
+            var products = await context
+                .Products
+                .Include(x => x.category)
+                .AsNoTracking()
+                .ToListAsync();
             return Ok(products);
         }
 
         [HttpGet]
-        [Route("products/{id:int}")]
+        [Route("{id:int}")]
         public async Task<ActionResult<List<Product>>> GetById(int id, [FromServices] DataContext context)
         {
-            var products = await context.Products.AsNoTracking().ToListAsync();
+            var products = await context
+                .Products
+                .Include(x => x.category)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             return Ok(products);
         }
 
         [HttpPost]
-        [Route("products")]
+        [Route("")]
         public async Task<ActionResult<List<Product>>> Post([FromBody] Product product, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
@@ -48,7 +58,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut]
-        [Route("product/{id:int}")]
+        [Route("{id:int}")]
         public async Task<ActionResult<List<Product>>> Put([FromBody] Product product, [FromServices] DataContext context)
         {
             try
@@ -64,7 +74,7 @@ namespace Shop.Controllers
         }
 
         [HttpDelete]
-        [Route("products/{id:int}")]
+        [Route("{id:int}")]
         public async Task<ActionResult<List<Product>>> Delete(int id, [FromServices] DataContext context)
         {
             var products = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
