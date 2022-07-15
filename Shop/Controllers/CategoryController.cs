@@ -23,15 +23,15 @@ namespace Shop.Controllers
         [Route("{id:int}")]
         public async Task<ActionResult<List<Category>>> GetById(int id, [FromServices] DataContext context)
         {
-            try
+            var categories = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (categories == null)
             {
-                var categories = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-                return Ok(categories);
+                return BadRequest(new { message = "O id informado não existe!" });
             }
-            catch (Exception)
-            {
-                return BadRequest(new { message = "O id não existe" });
-            }
+
+            return Ok(categories);
+
         }
 
         [HttpPost]

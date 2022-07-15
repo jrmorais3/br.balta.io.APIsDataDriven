@@ -4,6 +4,7 @@ using Shop.Data;
 using Shop.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Shop.Controllers
@@ -34,6 +35,20 @@ namespace Shop.Controllers
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return Ok(products);
+        }
+
+        [HttpGet]
+        [Route("categories/{id:int}")]
+        public async Task<ActionResult<List<Product>>> GetByCategory(int id, [FromServices] DataContext context)
+        {
+            var products = await context
+                .Products
+                .Include(x => x.category)
+                .AsNoTracking()
+                .Where(x => x.categoryId == id)
+                .ToListAsync();
+
+            return products;
         }
 
         [HttpPost]
