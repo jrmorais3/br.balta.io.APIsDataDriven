@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
-    [Route("Categories")]
+    [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
         [HttpGet]
