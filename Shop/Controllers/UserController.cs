@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
-    [Route("[controller]")]
+    [Route("v1/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,15 +23,9 @@ namespace Shop.Controllers
             var users = await context
                 .Users
                 .AsNoTracking()
-                .ToListAsync();
-
+                .ToListAsync()
+                ;
             return users;
-        }
-
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         [HttpPost]
@@ -99,12 +93,6 @@ namespace Shop.Controllers
             {
                 return BadRequest(new { message = "Não foi possível alterar o usuário" });
             }
-
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
