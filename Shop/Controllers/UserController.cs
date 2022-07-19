@@ -68,7 +68,7 @@ namespace Shop.Controllers
             };
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Route("{id:int}")]
         [Authorize(Roles = "manager")]
         public async Task<ActionResult<User>> Put([FromServices] DataContext context, [FromBody] User user, int id)
