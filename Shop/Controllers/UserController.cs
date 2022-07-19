@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
 using Shop.Models;
@@ -15,9 +16,16 @@ namespace Shop.Controllers
     public class UserController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("")]
+        [Authorize(Roles = "manager")]
+        public async Task<ActionResult<List<User>>> Get([FromServices] DataContext context)
         {
-            return new string[] { "value1", "value2" };
+            var users = await context
+                .Users
+                .AsNoTracking()
+                .ToListAsync();
+
+            return users;
         }
 
         [HttpGet("{id}")]
@@ -28,6 +36,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> Post([FromBody] User user, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
@@ -66,8 +75,31 @@ namespace Shop.Controllers
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Route("{id:int}")]
+        [Authorize(Roles = "manager")]
+        public async Task<ActionResult<User>> Put([FromServices] DataContext context, [FromBody] User user, int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != user.Id)
+            {
+                return NotFound(new { message = "Usuário não encontrado" });
+            }
+
+            try
+            {
+                context.Entry(user).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Não foi possível alterar o usuário" });
+            }
+
         }
 
         [HttpDelete("{id}")]
